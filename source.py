@@ -1,4 +1,5 @@
 import getpass,os
+from tkinter import *
 
 mainloop = True
 
@@ -14,7 +15,7 @@ class File:
 ########################################
 
 def login():
-    print('Welcome to TriOS 1.0! Please login.\n')
+    print('Welcome to TriOS 1.2! Please login.\n')
     password = 'root'
     if getpass.getpass("Username: admin\nPassword: ") == password:
         print('Successfully logged in!')
@@ -29,6 +30,40 @@ readme = File('readme','txt','wassup bbg, this was made by Trinex\nyou can conta
 environment = [readme]
 display = [readme.full]
 
+# -- // Functions \\ -- #
+
+def expand(code):
+    code = code.strip().split('\n')
+    full = '\n '.join(code)
+    return full
+
+#def save_code(code, file):
+#    file.ins = code
+
+def tk_ide(file):
+    def save_code():
+        file.ins = txt.get("1.0", "end-1c")
+        main.destroy()
+
+    main = Tk()
+    main.title('TriOS IDE')
+    main.geometry('512x512')
+
+    def indent_size(event):
+        text = event.widget
+        text.insert(INSERT,'    ')
+        return 'break'
+
+    txt = Text(main,width=60,height=30)
+    txt.pack()
+    txt.insert('1.0',file.ins)
+    txt.bind('<Tab>', indent_size)
+
+    save = Button(main,text="Save",width=30,command=save_code)
+    save.pack()
+
+    main.mainloop()
+
 # -- // Commands \\ -- #
 
 def help(_):
@@ -40,9 +75,10 @@ def help(_):
         'cmd : run something like in cmd\n'
         'sd : shuts down the OS\n'
         'cls : clears console\n'
-        'create : create a file - usage:> filename.filetype\n'
-        'delete : delete a file - usage:> filename.filetype\n'
-        'edit: edit a file - usage:> filename.filtype -a/-w yourtext'
+        'create : create a file - > filename.filetype\n'
+        'delete : delete a file - > filename.filetype\n'
+        'edit: edit a file - > filename.filtype -a/-w yourtext\n'
+        'ide : opens the text editor for a file'
     )
 
 def ls(_):
@@ -56,8 +92,8 @@ def cat(entry):
             if i.end == 'py':
                 try:
                     exec(i.ins)
-                except Exception as e:
-                    print(e)
+                except Exception as err:
+                    print(err)
 
 def read(entry):
     for i in environment:
@@ -107,17 +143,25 @@ def edit(entry):
             else:
                 print('Invalid flag!')
 
+def ide(entry):
+    for i in environment:
+        if i.full == entry[1]:
+            tk_ide(i)
+
 def cmd(entry):
     os.system(f'cmd /c {entry[1]}')
 
+def unfunny(_):
+    print('That was not funny. Not amused. Not a laugh. Not a chuckle. Not a Haha or even a hehe. That was not funny at all. I would be embarrassed if i were you. You need a tutor on comedy and on humor cuz this just aint it. It was terrible. It was horrible. It was NOT Funny. If anything it was embarrassing. I would hate to be you right now. Because it was not even a little bit funny. The person who has the least sense of humor could come up with something way better than that. You are a disgrace to humor. You are a disgrace to comedy. I am VERY disappointed in you. I expected you to ACTUALLY be funny. But. NO. you are not. Do not even think for a millisecond that you are even the slightest bit funny, because you\'re NOT. It was not funny. It was not funny. Atleast read a "Dad jokes 101" book before you even start to think about tweeting a "joke" like this. This is Disrespectful to ALL people who laugh. And who make others laugh. The nerve of some people thinking that they are even just a LITTLE bit funny. This was not close to funny.')
 
-cmds = {'help':help, '?':help, 'ls':ls, 'cat':cat, 'read':read, 'cmd':cmd, 'sd':sd, 'cls':cls, 'create':create, 'delete':delete, 'edit':edit}
+cmds = {'help':help, '?':help, 'ls':ls, 'cat':cat, 'read':read, 'cmd':cmd, 'sd':sd, 'cls':cls, 'create':create, 'delete':delete, 'edit':edit,
+        '69':unfunny, '420':unfunny, '42069':unfunny, '69420':unfunny, '6969':unfunny, '420420':unfunny, 'ide':ide}
 
 # -- // Mainloop \\ -- #
 
 while mainloop:
-    entry = input('\n> ').split(' ', 1)
     try:
+        entry = input('\n> ').split(' ', 1)
         cmds[entry[0].lower()](entry)
     except:
         print('didnt work lol')
