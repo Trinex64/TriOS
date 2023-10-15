@@ -1,4 +1,4 @@
 # TriOS
-Funny lil python os i made, very simple very simple.
+Funny lil python os i made, very cool(?) very simple.
 
 Password is 'root' btw
