@@ -31,52 +31,48 @@ display = [readme.full]
 
 # -- // Commands \\ -- #
 
-def help():
+def help(_):
     print(
-        ' help : shows all commands\n',
-        'ls : lists everything in the current environment\n',
-        'cat : opens file\n',
+        'help/? : shows all commands\n'
+        'ls : lists everything in the current environment\n'
+        'cat : opens file\n'
         'read : reads file without opening\n'
-        'ip : shows you your ip\n',
-        'cmd : run something like in cmd\n',
-        'sd : shuts down the OS\n',
-        'cls : clears console\n',
-        'create : create a file - usage:> filename.filetype\n',
-        'delete : delete a file - usage:> filename.filetype\n',
+        'cmd : run something like in cmd\n'
+        'sd : shuts down the OS\n'
+        'cls : clears console\n'
+        'create : create a file - usage:> filename.filetype\n'
+        'delete : delete a file - usage:> filename.filetype\n'
         'edit: edit a file - usage:> filename.filtype -a/-w yourtext'
     )
 
-def ls():
+def ls(_):
     print([i for i in display])
 
-def cat():
-    entry = input('\ncat > ')
+def cat(entry):
     for i in environment:
-        if i.full == entry:
+        if i.full == entry[1]:
             if i.end == 'txt':
                 print(i.ins)
             if i.end == 'py':
-                exec(i.ins)
+                try:
+                    exec(i.ins)
+                except Exception as e:
+                    print(e)
 
-def read():
-    entry = input('\nread > ')
+def read(entry):
     for i in environment:
-        if i.full == entry:
+        if i.full == entry[1]:
             print(i.ins)
 
-def ip():
-    os.system('cmd /c ipconfig /all')
-
-def sd():
+def sd(_):
     global mainloop
     mainloop = False
 
-def cls():
+def cls(_):
     os.system('cmd /c cls')
 
-def create():
-    entry = input('\ncreate > ').replace(' ', '')
-    entry = entry.split('.')
+def create(entry):
+    entry = entry[1].replace(' ', '').split('.')
     new_file = File(entry[0], entry[1], '')
     for i in environment:
         if i.full != new_file.full:
@@ -87,43 +83,41 @@ def create():
         else:
             print('File already exists!')
 
-def delete():
-    entry = input('\ndelete > ')
+def delete(entry):
     for i in environment:
-        if i.full == entry:
+        if i.full == entry[1]:
             environment.remove(i)
             display.remove(i.full)
             print(f'{i.full} Deleted!')
+            return
+    print('File Not Found!')
             
-def edit():
-    entry = input('\nedit > ')
-    entry = entry.split(' ', 2)
+def edit(entry):
+    entry = entry[1].split(' ', 2)
     for i in environment:
         if i.full == entry[0]:
             if entry[1].lower() == '-w':
                 i.ins = entry[2]
-                i.ins = i.ins.replace('¬N','\n')
+                i.ins = i.ins.replace('¬>','\n')
                 print(f'{i.full} Edited!')
             elif entry[1].lower() == '-a':
                 i.ins += entry[2]
-                i.ins = i.ins.replace('-N','\n')
+                i.ins = i.ins.replace('¬>','\n')
                 print(f'{i.full} Edited!')
             else:
                 print('Invalid flag!')
 
-def cmd():
-    entry = input('\ncmd > ')
-    os.system(f'cmd /c {entry}')
+def cmd(entry):
+    os.system(f'cmd /c {entry[1]}')
 
 
-cmds = {'help':help, '?':help, 'ls':ls, 'cat':cat, 'read':read, 'ip':ip, 'cmd':cmd, 'sd':sd, 'cls':cls,
-        'create':create, 'delete':delete, 'edit':edit}
+cmds = {'help':help, '?':help, 'ls':ls, 'cat':cat, 'read':read, 'cmd':cmd, 'sd':sd, 'cls':cls, 'create':create, 'delete':delete, 'edit':edit}
 
 # -- // Mainloop \\ -- #
 
 while mainloop:
-    entry = input('\n> ').lower()
+    entry = input('\n> ').split(' ', 1)
     try:
-        cmds[entry]()
+        cmds[entry[0].lower()](entry)
     except:
         print('didnt work lol')
